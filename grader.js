@@ -47,7 +47,7 @@ var assertUrlValid = function(infile) {
 */
  
 var cheerioHtmlFile = function(htmlfile,checksfile) {
-    //console.log("in cheerioHtml");
+    //console.log(cheerio.load(fs.readFileSync(htmlfile)));
     checkHtmlFile(cheerio.load(fs.readFileSync(htmlfile)),checksfile);
 };
 
@@ -56,6 +56,7 @@ var cheerioHtmlFile = function(htmlfile,checksfile) {
 var restUrl = function(url,checksfile) {
     //console.log("in restUrl");
     rest.get(url).on('complete',function(data) {
+	//console.log("data:::::::::"+cheerio.load(data))
 	checkHtmlFile(cheerio.load(data), checksfile)
     });	
 };
@@ -70,21 +71,21 @@ var loadChecks = function(checksfile) {
 
 var checkHtmlFileInit = function(htmlfile,checksfile,url) {
     //console.log("in init");
-    //var iout = {};
     if (url) {
+	//console.log(url);
 	restUrl(url,checksfile);
     }
     else {
 	cheerioHtmlFile(htmlfile,checksfile);
     }	
-    //console.log(iout);
-    return out;
+    //return out;
 };
 
 
 
 var checkHtmlFile = function(html, checksfile) {
     //console.log("in checkHtmlFile");
+    //console.log("html:"+html);
     //$ = cheerioHtmlFile(htmlfile);
     var checks = loadChecks(checksfile).sort();
     //console.log("past loadChecks");
@@ -95,7 +96,8 @@ var checkHtmlFile = function(html, checksfile) {
     }
     //console.log("past for loop");
     //console.log(out);
-    return out;
+    //return out;
+    console.log(JSON.stringify(out,null,4));
 };
 
 var clone = function(fn) {
@@ -111,8 +113,8 @@ if(require.main == module) {
         .option('-u, --url <url>', 'URL to index.html', null, URL_DEFAULT) 
         .parse(process.argv);
     var checkJson = checkHtmlFileInit(program.file, program.checks, program.url);
-    var outJson = JSON.stringify(checkJson, null, 4);
-    console.log(outJson);
+    //var outJson = JSON.stringify(checkJson, null, 4);
+    //console.log(outJson);
 } else {
     exports.checkHtmlFile = checkHtmlFile;
 }
